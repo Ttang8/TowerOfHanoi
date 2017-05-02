@@ -41,4 +41,81 @@
 
 class TowersOfHanoi
 
+  attr_reader :towers
+
+  def initialize
+    @towers = [[],[],[]]
+    @towers[0] = [3,2,1]
+  end
+
+  def move(from_tower, to_tower)
+    disc = @towers[from_tower].pop
+    @towers[to_tower].push(disc)
+  end
+
+  def valid_move?(from_tower, to_tower)
+    return false if @towers[from_tower] == nil || @towers[to_tower] == nil
+    return false if @towers[from_tower].empty?
+    return true if @towers[to_tower].empty?
+    return true if @towers[from_tower].last < @towers[to_tower].last
+    false
+  end
+
+  def won?
+    return true if @towers[1].size == 3 || @towers[2].size == 3
+    false
+  end
+
+  def asking
+    puts "Choose column to pick up disc.(0,1,2)"
+    @from_tower = gets.chomp
+    if @from_tower == "quit"
+      return
+    end
+    puts "Choose column to drop disc.(0,1,2)"
+    @to_tower = gets.chomp
+    if @to_tower == "quit"
+      return
+    end
+      @from_tower = @from_tower.to_i
+      @to_tower = @to_tower.to_i
+  end
+
+  def play
+    system "clear"
+    puts "Welcome to Towers of Hanoi!\nType in 'quit' to leave the game."
+    render(@towers)
+    until won?
+      asking
+      if @from_tower == "quit" || @to_tower == "quit"
+        return system "exit"
+      end
+      until valid_move?(@from_tower, @to_tower)
+        system "clear"
+        puts "Invalid move. Try again."
+        render(@towers)
+        asking
+        if @from_tower == "quit" || @to_tower == "quit"
+          return system "exit"
+        end
+      end
+      system "clear"
+      move(@from_tower, @to_tower)
+      render(@towers)
+    end
+
+      puts "Game Over!\nYou Win!!"
+  end
+
+  def render(array)
+    @arr = array.dup
+    @arr.map! { |arr| arr.reverse}
+    @arr.each do |el|
+      el.unshift(0) until el.length == 3
+    end
+    @arr.transpose.each { |arr| puts "#{arr}"}
+  end
 end
+
+# game = TowersOfHanoi.new
+# game.play
